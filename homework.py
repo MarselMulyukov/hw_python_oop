@@ -20,11 +20,10 @@ class Calculator:
         return sum(list_of_spendings)
 
     def get_week_stats(self):
-        '''Берем даты большие или равные первому дню последних семи дней'''
         today = dt.datetime.now().date()  # дата сегодня
-        week_ago = today - dt.timedelta(6)  # первый из последних семи дней
+        week_ago = today - dt.timedelta(7)  # первый из последних семи дней
         list_of_spendings = [record.amount for record in self.records if
-                             week_ago <= record.date <= today]
+                             week_ago < record.date <= today]
         return sum(list_of_spendings)
 
 
@@ -35,9 +34,10 @@ class Record:
         if date:  # если необязательный параметр
             date_format = '%d.%m.%Y'  # date передан в аргументах экземпляра
             moment = dt.datetime.strptime(date, date_format)  # приводим дату
-            self.date = moment.date()  # к формату '%Y.%m.%d'
+            # к формату '%Y.%m.%d'
         else:
-            self.date = dt.datetime.now().date()
+            moment = dt.datetime.now()
+        self.date = moment.date()
 
 
 class CashCalculator(Calculator):
@@ -45,14 +45,12 @@ class CashCalculator(Calculator):
     EURO_RATE = 89.33
 
     def get_today_cash_remained(self, currency: str):
-        '''Здесь использовал тоже return без else. Не доволен количеством
-        задействуемых переменных. Может быть что-то подскажешь?'''
         currencies_dict = {'rub': (1, 'руб'), 'eur': (self.EURO_RATE, 'Euro'),
                            'usd': (self.USD_RATE, 'USD')}
         balance = self.today_remained()
         abs_balance = abs(balance)
-        recounted = round(abs_balance / currencies_dict[currency][0], 2)
-        currency_txt = currencies_dict[currency][1]
+        rate, currency_txt = currencies_dict[currency]
+        recounted = round(abs_balance / rate, 2)
         if balance > 0:
             return (f'На сегодня осталось {recounted}'
                     f' {currency_txt}')
