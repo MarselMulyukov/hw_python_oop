@@ -13,7 +13,6 @@ class Calculator:
         self.records.append(record)
 
     def get_today_stats(self):
-        '''Здесь тоже использовал List comprehensions'''
         today = dt.datetime.now().date()
         list_of_spendings = [record.amount for record in self.records if
                              record.date == today]
@@ -21,7 +20,7 @@ class Calculator:
 
     def get_week_stats(self):
         today = dt.datetime.now().date()  # дата сегодня
-        week_ago = today - dt.timedelta(7)  # первый из последних семи дней
+        week_ago = today - dt.timedelta(7)  # дата неделю назад
         list_of_spendings = [record.amount for record in self.records if
                              week_ago < record.date <= today]
         return sum(list_of_spendings)
@@ -31,10 +30,9 @@ class Record:
     def __init__(self, amount, comment, date=None):
         self.amount = amount
         self.comment = comment
-        if date:  # если необязательный параметр
-            date_format = '%d.%m.%Y'  # date передан в аргументах экземпляра
-            moment = dt.datetime.strptime(date, date_format)  # приводим дату
-            # к формату '%Y.%m.%d'
+        if date:
+            date_format = '%d.%m.%Y'
+            moment = dt.datetime.strptime(date, date_format)
         else:
             moment = dt.datetime.now()
         self.date = moment.date()
